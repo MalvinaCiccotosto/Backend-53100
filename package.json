@@ -2,11 +2,12 @@
   "type": "module",
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "sass-watch": "sass --no-source-map --watch src/sass/styles.scss src/public/css/styless.css",
     "nodemon-watch": "nodemon src/index.js",
-    "dev": "npm-run-all --parallel sass-watch nodemon-watch"
+    "dev": "npm-run-all --parallel sass-watch nodemon-watch",
+    "start": "nodemon ./src/app.js"
   },
   "keywords": [],
   "author": "",
