@@ -8,9 +8,9 @@ export default class ProductManager {
     }
 
 
-    getAll = async (limit) => {
+    getAll = async () => {
 
-        let result = await productsModel.find().limit(limit)
+        let result = await productsModel.find()
         return result
     }
 

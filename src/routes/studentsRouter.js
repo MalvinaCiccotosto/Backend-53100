@@ -1,78 +1,51 @@
-import { Express } from "express";
-import { Router } from "express";
+import express from "express";
 import studentsModel from "../models/estudiantes.js";
 
+const router = express.Router();
 
 
-
-const router =  express.Router()
-
-export default router
-
-//Todos los students
-Router.get("/students", async (req, res)=>{
-
-    let result = await studentsModel.find()
-
-    res.json({result})
-})
+router.get("/students", async (req, res) => {
+    let result = await studentsModel.find();
+    res.json({ result });
+});
 
 
-//Students by id
-router.get("/students/:id", async (req, res)=>{
+router.get("/students/:id", async (req, res) => {
+    let id = req.params.id;
+    let result = await studentsModel.findOne({ _id: id })
+    res.json({ result })
+});
 
-    let id = req.params.id
-
-    let result = await studentsModel.findOne({_id:id})
-
-    res.json({result})
-})
-
-
-//Insert student
-router.post("/students/insertion", async (req, res)=>{
-
-    let result = await studentsModel.insertMany(students)
-
-    res.json({result})
-})
+router.post("/students/insertion", async (req, res) => {
+    let result = await studentsModel.insertMany(req.body.students)
+    res.json({ result });
+});
 
 
-//Create student
-router.post("/students/create", async (req, res)=>{
-
-    const {nombre, apellido, edad, dni, curso, nota} = req.body
-
-    let user = {
-        nombre, apellido, edad, dni, curso, nota
-    }
-
+router.post("/students/create", async (req, res) => {
+    const { nombre, apellido, edad, dni, curso, nota } = req.body;
+    let user = { nombre, apellido, edad, dni, curso, nota }
     let result = await studentsModel.create(user)
-
-    res.json({result})
-})
-
-
-//Update student
-router.put("/students/edit/:id", async (req, res)=>{
-
-    let id = req.params.id
-    let updateUser = req.body
-    let result = await studentsModel.updateOne({_id:id}, {$set:updateUser})
-
-    res.json({result})
-}) 
+    res.json({ result })
+});
 
 
-//Delete student
-router.delete("/students/delete/:id", async (req, res)=>{
+router.put("/students/edit/:id", async (req, res) => {
+    let id = req.params.id;
+    let updateUser = req.body;
+    let result = await studentsModel.updateOne({ _id: id }, { $set: updateUser })
+    res.json({ result });
+});
 
-    let id = req.params.id
 
-    let result = await studentsModel.deleteOne({_id:id})
+router.delete("/students/delete/:id", async (req, res) => {
+    let id = req.params.id;
+    let result = await studentsModel.deleteOne({ _id: id })
+    res.json({ result });
+});
 
-    res.json({result})
-})
+export default router;
+
 
 
 const students = [{

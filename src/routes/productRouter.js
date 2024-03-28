@@ -1,15 +1,16 @@
-import productManager from "../dao/serives/productManager.js";
+import productManager from "../dao/services/productManager.js";
 import express from "express";
 
 
-const productManager = new productManager()
+const ProductManager = new productManager()
 const router = express.Router()
+
 
 
 router.get("/all", (req, res) =>{
 
     let limit = req.query
-    let data = productManager.getAll(limit)
+    let data = productManager.getAll()
     res.json({data})
 
 })
