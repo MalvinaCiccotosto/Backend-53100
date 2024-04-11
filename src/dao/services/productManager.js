@@ -51,4 +51,3 @@ export default class ProductManager {
 }
 
 
-getAll(10)

@@ -1,5 +1,5 @@
 import express from "express";
-import studentsModel from "../models/estudiantes.js";
+import studentsModel from "../models/students.js";
 
 const router = express.Router();
 
@@ -79,4 +79,3 @@ const students = [{
 }]
 
 
-module.exports = router
