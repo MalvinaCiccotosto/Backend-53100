@@ -1,5 +1,3 @@
-import { json, response } from "express";
-
 const form = document.getElementById('registerForm');
 
 form.addEventListener('submit', e=> {

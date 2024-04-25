@@ -28,17 +28,24 @@ res.status(201).send({ staus: "success", payload: result });
 }); */
 
 // Registrar usando passport
-router.post(
-"/register",
-passport.authenticate("register", { failureRedirect: "/failregister" }),
-async (req, res) => {
-    res.status(201).send({ status: "success", message: "Usuario registrado" });
-}
-);
-
-router.get("/failregister", async (req, res) => {
-console.log("error");
-res.send({ error: "Falló" });
+router.post("/register", async (req, res) => {
+  const { first_name, last_name, email, age, password } = req.body;
+  const exist = await userModel.findOne({ email: email });
+  if (exist) {
+    return res
+      .status(400)
+      .send({ status: "error", error: "el correo ya existe" });
+  }
+  const user = {
+    first_name,
+    last_name,
+    email,
+    age,
+    password: createHash(password),
+  };
+  const result = await userModel.create(user);
+  console.log(result);
+  res.status(201).send({ staus: "success", payload: result });
 });
 
 /* router.post("/login", async (req, res) => {
