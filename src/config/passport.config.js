@@ -3,10 +3,41 @@ import local from "passport-local"; //estrategia local
 import GitHubStrategy from "passport-github2"; //estrategia github
 import userService from "../../dao/models/Users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
+import jwt from "passport-jwt";
 
 const LocalStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtracJWT = jwt.ExtractJwt;
 
 const initializePassport = () => {
+  //función que extrae las cookies
+  const cookieExtractor = (req) => {
+    //lógica a implementar
+
+    let token = null;
+    if (req && req.cookies) {
+      token = req.cookies["practica-integradora"];
+    }
+    return token;
+  };
+  //Estrategia para jwt
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtracJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: "practica-integradora",
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+  
   //Registrar ususario loclamente
     passport.use(
     "register",
@@ -65,8 +96,8 @@ passport.use(
     "github",
     new GitHubStrategy(
     {
-        clientID: "Iv1.88973e90f3fab95a",//id de la app en github
-        clientSecret: "fd8e7f3b575d548ea42eb03f4dd9fcd2b928e887",//clave secreta de github
+        clientID: "Iv1.352ce04a002c0f77",//id de la app en github
+        clientSecret: "c998725e3e9fe01ef42d3c9a4b898e17f80e06d1",//clave secreta de github
         callbackURL: "http://localhost:3030/api/sessions/githubcallback",//url callback de github
     },
     async (accessToken, refreshToken, profile, done) => {
