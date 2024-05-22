@@ -16,24 +16,97 @@ import userRouter from "./routes/users.router.js";
 import toysRouter from "./routes/toys.router.js";
 //import MongoSingleton from "./config/MongoSingleton.js";
 import cors from 'cors';
-
+import contactRoutes from "./routes/contacts.route.js";
+import { connection } from "./config/database.js";
+import cors from "cors";
+import businessRouter from './routes/business.router.js'
+import ordersRouter from './routes/orders.router.js'
+import { config } from "dotenv";
+import nodemailer from "nodemailer";
+import twilio from "twilio";
 
 
 const app = express();
-
 const port = entorno.port;
 
+config();
 
-//seteamos el puerto
+
+//setting
 app.set("PORT", process.env.PORT || 3030);
+
+
+//twilio
+const client = twilio(process.env.TWILIO_SSID, process.env.AUTH_TOKEN);
+//nodemailer
+const mailOptions = {
+  service: "gmail",
+  host: "smtp.gmail.com",
+  secure: false,
+  port: 587,
+  auth: {
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD,
+  },
+};
+const transport = nodemailer.createTransport(mailOptions);
+
 
 const DBURL =
 "mongodb://127.0.0.1:27017/ecommerce?retryWrites=true&w=majority";
 const connection = mongoose.connect(DBURL); //migrar a otro archivo
+
+//middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
+
+//mail route
+app.get("/mail", async (req, res) => {
+  const result = await transport.sendMail({
+    from: `Correo de prueba <${process.env.MAIL_USERNAME}>`,
+    to: `${process.env.MAIL_USERNAME}`,
+    subject: "Correo de prueba",
+    html: `<div>
+              <h1>CORREO TEST</h1>
+              <p>Correo sin adjunto</p>
+          </div>`,
+  });
+  res.send("Correo enviado");
+});
+app.get("/mail-adjunto", async (req, res) => {
+  const result = await transport.sendMail({
+    from: `Correo de prueba <${process.env.MAIL_USERNAME}>`,
+    to: `${process.env.MAIL_USERNAME}`,
+    subject: "Correo de prueba",
+    html: `<div>
+              <h1>CORREO TEST</h1>
+              <p>Correo con adjunto</p>
+          </div>`,
+    attachments: [
+      {
+        filename: "img1.jpg",
+        path: __dirname + "/public/img/img1.jpg",
+        cid: "img1",
+      },
+    ],
+  });
+  res.send("Correo enviado");
+});
+
+//sms
+app.get("/sms", async (req, res) => {
+  const { message } = req.body;
+  const result = await client.messages.create({
+    body: message,
+    to: process.env.PHONE_NUMBER_TO, //cliente
+    from: process.env.PHONE_NUMBER, //numero de twilio
+  });
+
+  res.send("Mensaje enviado");
+});
+
 //logica de la sesión
 app.use(
 session({
@@ -50,9 +123,13 @@ session({
 //routes
 app.use("/api", userRouter);
 app.use("/api", toysRouter);
+app.use("/contacts", contactRoutes);
+app.use('/api/users', userRouter)
+app.use('/api/business', businessRouter)
+app.use('/api/orders', ordersRouter)
 //ruta principal
 app.get("/", (req, res) => {
-  res.status(200).send("Inicio");
+  res.send("Inicio");
 });
 
 app.get('/test',(req, res)=>{
@@ -78,6 +155,13 @@ app.listen(app.get("PORT"), console.log(`Server on port ${app.get("PORT")}`));
 app.listen(port, () => {
   console.log(`Server on port ${port}`);
 });
+
+
+connection()
+app.listen(3030, () => {
+  console.log("Server on port 3030");
+});
+
 
 //inicializar commader
 // const program= new Command()
