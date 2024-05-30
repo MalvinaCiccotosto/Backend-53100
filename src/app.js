@@ -24,6 +24,9 @@ import ordersRouter from './routes/orders.router.js'
 import { config } from "dotenv";
 import nodemailer from "nodemailer";
 import twilio from "twilio";
+import usersRouter from './routes/user.route.js'
+import { addLogger } from './utils/logger.js';
+//import { addLogger } from './utils/logger-env.js';
 
 
 const app = express();
@@ -61,6 +64,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
+app.use(addLogger)
 
 //mail route
 app.get("/mail", async (req, res) => {
@@ -107,6 +111,31 @@ app.get("/sms", async (req, res) => {
   res.send("Mensaje enviado");
 });
 
+//
+app.get('/', (req, res)=>{
+  req.logger.info('Alerta')
+  console.log("Alerta")
+  res.send({message:"Esto es un logger"})
+})
+
+app.get('/opsencilla', (req,res)=>{
+  let sum =0
+  for (let i = 0; i < 100000; i++) {
+      sum+=i
+      
+  }
+  res.send({sum})
+})
+app.get('/opcompleja', (req,res)=>{
+  let sum =0
+  for (let i = 0; i < 5e8; i++) {
+      sum+=i
+      
+  }
+  res.send({sum})
+})
+
+
 //logica de la sesión
 app.use(
 session({
@@ -124,7 +153,7 @@ session({
 app.use("/api", userRouter);
 app.use("/api", toysRouter);
 app.use("/contacts", contactRoutes);
-app.use('/api/users', userRouter)
+app.use('/api/users', usersRouter)
 app.use('/api/business', businessRouter)
 app.use('/api/orders', ordersRouter)
 //ruta principal
