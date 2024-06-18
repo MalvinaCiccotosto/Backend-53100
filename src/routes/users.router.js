@@ -16,6 +16,11 @@ router.post('/users', usersController.createUser)
 router.get("/", getUsers);
 router.get("/:uid", getUserById);
 router.post("/", saveUser);
+router.get('/',usersController.getAllUsers);
+
+router.get('/:uid',usersController.getUser);
+router.put('/:uid',usersController.updateUser);
+router.delete('/:uid',usersController.deleteUser);
 
 
 

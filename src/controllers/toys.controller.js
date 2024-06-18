@@ -1,4 +1,4 @@
-import toyService from "../services/toys.service.js";
+import toyService from "../services/toy.service.js";
 
 
 class ToyController {

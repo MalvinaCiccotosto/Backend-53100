@@ -1,15 +1,19 @@
 import passport from "passport";
 import local from "passport-local"; //estrategia local
 import GitHubStrategy from "passport-github2"; //estrategia github
-import userService from "../../dao/models/Users.model.js";
+import userService from "../dao/models/Users.model.js";
 import { createHash, isValidPassword } from "../utils.js";
-import jwt from "passport-jwt";
+import jwt, { ExtractJwt } from "passport-jwt";
+import { userService } from "../repositories/services.js";
+import config from "./config.js";
+
+
 
 const LocalStrategy = local.Strategy;
 const JWTStrategy = jwt.Strategy;
 const ExtracJWT = jwt.ExtractJwt;
 
-const initializePassport = () => {
+const initializePassport = async () => {
   //función que extrae las cookies
   const cookieExtractor = (req) => {
     //lógica a implementar

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2' 
 
-const { Schema } = mongoose;
+const { Schema, SchemaTypes } = mongoose;
 
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     name: String,
     email: String,
     role: String,
@@ -30,6 +30,6 @@ cart: [
 // Aplica el plugin de paginación
 userSchema.plugin(mongoosePaginate)
 
-const userModel = model("User", userSchema);
+const userModel = mongoose.model("User", userSchema);
 
 export default userModel;
